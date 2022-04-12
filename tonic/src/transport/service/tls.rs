@@ -156,6 +156,15 @@ impl TlsAcceptor {
         })
     }
 
+    #[cfg(feature = "tls")]
+    pub(crate) fn new_with_rustls_raw(
+        config: tokio_rustls::rustls::ServerConfig,
+    ) -> Result<Self, crate::Error> {
+        Ok(Self {
+            inner: Arc::new(config),
+        })
+    }
+
     pub(crate) async fn accept<IO>(&self, io: IO) -> Result<TlsStream<IO>, crate::Error>
     where
         IO: AsyncRead + AsyncWrite + Connected + Unpin + Send + 'static,
