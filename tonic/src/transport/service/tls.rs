@@ -80,8 +80,15 @@ impl TlsConnector {
             }
             None => builder.with_no_client_auth(),
         };
-
         config.alpn_protocols.push(ALPN_H2.as_bytes().to_vec());
+        Self::new_with_rustls_raw(config, domain)
+    }
+
+    #[cfg(feature = "tls")]
+    pub(crate) fn new_with_rustls_raw(
+        config: tokio_rustls::rustls::ClientConfig,
+        domain: String,
+    ) -> Result<Self, crate::Error> {
         Ok(Self {
             config: Arc::new(config),
             domain: Arc::new(domain.as_str().try_into()?),
